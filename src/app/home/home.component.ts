@@ -1,10 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import * as fromApp from './../store/app.reducers';
 import * as fromAuth from './../auth/store/auth.reducer';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { Location } from '@angular/common';
+import { BASE_URL_TOKEN } from '../app.config';
 
 @Component({
   selector: 'app-home',
@@ -16,10 +17,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   private clientId: string;
   private authStateSubscription: Subscription;
 
-  constructor(private location: Location, private store: Store<fromApp.State>) { }
+  constructor(
+    private location: Location,
+    private store: Store<fromApp.State>,
+    @Inject(BASE_URL_TOKEN) private baseUrl: string
+  ) { }
 
   signIn(): void {
-    window.location.href = `https://api.instagram.com/oauth/authorize/?client_id=${this.clientId}&redirect_uri=${this.location.path()}&response_type=token`;
+    window.location.href = `https://api.instagram.com/oauth/authorize/?client_id=${this.clientId}&redirect_uri=${this.baseUrl}${this.location.path()}&response_type=token`;
   }
 
   ngOnInit(): void {
