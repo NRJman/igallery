@@ -23,7 +23,6 @@ import { reducers } from './store/app.reducers';
   ],
   imports: [
     BrowserModule,
-    StoreModule.forRoot(reducers),
     CoreModule,
     AppRoutingModule
   ],
