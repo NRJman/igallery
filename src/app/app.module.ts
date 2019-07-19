@@ -9,8 +9,6 @@ import { GameComponent } from './game/game.component';
 import { GalleryComponent } from './gallery/gallery.component';
 import { HeaderComponent } from './core/header/header.component';
 import { CoreModule } from './core/core.module';
-import { StoreModule } from '@ngrx/store';
-import { reducers } from './store/app.reducers';
 
 @NgModule({
   declarations: [

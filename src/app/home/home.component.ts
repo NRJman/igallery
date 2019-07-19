@@ -7,6 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Location } from '@angular/common';
 import { BASE_URL_TOKEN } from '../app.config';
 import { Unsubscriber } from '../shared/unsubscriber';
+import { getClientId } from '../auth/store/auth.selectors';
 
 @Component({
   selector: 'app-home',
@@ -14,9 +15,8 @@ import { Unsubscriber } from '../shared/unsubscriber';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent extends Unsubscriber implements OnInit, OnDestroy {
-  private authState$: Observable<fromAuth.State>;
+  private clientId$: Observable<string>;
   private clientId: string;
-  private authStateSubscription: Subscription;
 
   constructor(
     private location: Location,
@@ -31,13 +31,13 @@ export class HomeComponent extends Unsubscriber implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.authState$ = this.store.select('auth');
-    this.authStateSubscription = this.authState$
+    this.clientId$ = this.store.select(getClientId);
+    this.clientId$
     .pipe(
       takeUntil(this.subscriptionController$$)
     )
-    .subscribe((authState: fromAuth.State) => {
-      this.clientId = authState.clientId;
+    .subscribe((clientId: string) => {
+      this.clientId = clientId;
     });
   }
 
