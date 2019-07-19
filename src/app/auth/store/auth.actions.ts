@@ -8,6 +8,7 @@ export class SignIn {
 
 export class NavigateAfterSuccessfulSigningIn {
     readonly type = NAVIGATE_AFTER_SUCCESSFUL_SIGNING_IN;
+    constructor(public payload: string) { }
 }
 
 export type AuthActions = SignIn | NavigateAfterSuccessfulSigningIn;

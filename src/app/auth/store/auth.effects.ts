@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import * as fromAuthActions from './auth.actions';
 import { pipe } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class AuthEffects {
     authSignIn = this.actions$
         .pipe(
             ofType(fromAuthActions.SIGN_IN),
-            tap(() => {
+            map(() => {
                 return {
                     type: fromAuthActions.NAVIGATE_AFTER_SUCCESSFUL_SIGNING_IN,
                     payload: '/'
@@ -25,8 +25,11 @@ export class AuthEffects {
     authNavigate = this.actions$
         .pipe(
             ofType(fromAuthActions.NAVIGATE_AFTER_SUCCESSFUL_SIGNING_IN),
+            map((action: fromAuthActions.NavigateAfterSuccessfulSigningIn): string => action.payload),
             tap((path) => {
-                this.router.navigate([path]);
+                this.router.navigate([path], {
+                    fragment: null
+                });
             })
         );
 }
