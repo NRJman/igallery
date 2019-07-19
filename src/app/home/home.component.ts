@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import * as fromApp from './../store/app.reducers';
-import * as fromAuth from './../auth/store/auth.reducer';
+import * as fromAuthActions from './../auth/store/auth.actions';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -8,6 +8,7 @@ import { Location } from '@angular/common';
 import { BASE_URL_TOKEN } from '../app.config';
 import { Unsubscriber } from '../shared/unsubscriber';
 import { getClientId } from '../auth/store/auth.selectors';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -15,12 +16,12 @@ import { getClientId } from '../auth/store/auth.selectors';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent extends Unsubscriber implements OnInit, OnDestroy {
-  private clientId$: Observable<string>;
   private clientId: string;
 
   constructor(
     private location: Location,
     private store: Store<fromApp.State>,
+    private route: ActivatedRoute,
     @Inject(BASE_URL_TOKEN) private baseUrl: string
   ) {
     super();
@@ -31,14 +32,25 @@ export class HomeComponent extends Unsubscriber implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.clientId$ = this.store.select(getClientId);
-    this.clientId$
-    .pipe(
-      takeUntil(this.subscriptionController$$)
-    )
-    .subscribe((clientId: string) => {
-      this.clientId = clientId;
-    });
+    this.store.select(getClientId)
+      .pipe(
+        takeUntil(this.subscriptionController$$)
+      )
+      .subscribe((clientId: string): void => {
+        this.clientId = clientId;
+      });
+
+    this.route.fragment
+      .pipe(
+        takeUntil(this.subscriptionController$$)
+      )
+      .subscribe((routeFragment: string): void => {
+        if (routeFragment.indexOf('access_token=') === 0) {
+          const accessToken: string = routeFragment.slice('access_token='.length);
+
+          this.store.dispatch(new fromAuthActions.SignIn(accessToken));
+        }
+      });
   }
 
   ngOnDestroy(): void {

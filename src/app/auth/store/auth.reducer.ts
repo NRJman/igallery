@@ -19,7 +19,7 @@ export function authReducer(state: State = initialState, action: fromAuthActions
                 ...state,
                 accessToken: action.payload,
                 isAuthenticated: true
-            };
+            }
         default:
             return state;
     }
