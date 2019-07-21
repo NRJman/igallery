@@ -5,12 +5,18 @@ import { GalleryComponent } from './gallery/gallery.component';
 import { GameComponent } from './game/game.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
+export const enum ROUTING_PATHS {
+  EMPTY = '',
+  GALLERY = 'gallery',
+  GAME = 'game',
+  WILD_CARD = '**'
+}
 
 const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'gallery', component: GalleryComponent },
-  { path: 'game', component: GameComponent },
-  { path: '**', component: PageNotFoundComponent }
+  { path: ROUTING_PATHS.EMPTY, component: HomeComponent, pathMatch: 'full' },
+  { path: ROUTING_PATHS.GALLERY, component: GalleryComponent },
+  { path: ROUTING_PATHS.GAME, component: GameComponent },
+  { path: ROUTING_PATHS.WILD_CARD, component: PageNotFoundComponent }
 ];
 
 @NgModule({
