@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BASE_URL_TOKEN, BASE_URL, CLIENT_ID_TOKEN, CLIENT_ID } from '../app.config';
+import * as fromAppConfig from '../app.config';
 import { StoreModule } from '@ngrx/store';
 import { reducers } from '../store/app.reducers';
 import { EffectsModule } from '@ngrx/effects';
 import { AuthEffects } from '../auth/store/auth.effects';
-
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { CookieService } from 'ngx-cookie-service';
 
 
 @NgModule({
@@ -13,14 +14,16 @@ import { AuthEffects } from '../auth/store/auth.effects';
   imports: [
     CommonModule,
     StoreModule.forRoot(reducers),
-    EffectsModule.forRoot([AuthEffects])
-  ],
-  exports: [
-    StoreModule
+    EffectsModule.forRoot([AuthEffects]),
+    StoreDevtoolsModule.instrument({
+      maxAge: 15
+    })
   ],
   providers: [
-    { provide: BASE_URL_TOKEN, useValue: BASE_URL },
-    { provide: CLIENT_ID_TOKEN, useValue: CLIENT_ID }
+    { provide: fromAppConfig.APP_BASE_URL_TOKEN, useValue: fromAppConfig.APP_BASE_URL },
+    { provide: fromAppConfig.CLIENT_ID_TOKEN, useValue: fromAppConfig.CLIENT_ID },
+    { provide: fromAppConfig.INSTAGRAM_API_BASE_URL_TOKEN, useValue: fromAppConfig.INSTAGRAM_API_BASE_URL },
+    CookieService
   ]
 })
 export class CoreModule { }

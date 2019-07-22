@@ -4,7 +4,7 @@ import * as fromAuthActions from './../auth/store/auth.actions';
 import { Store } from '@ngrx/store';
 import { takeUntil } from 'rxjs/operators';
 import { Location } from '@angular/common';
-import { BASE_URL_TOKEN, CLIENT_ID_TOKEN } from '../app.config';
+import * as fromAppConfig from '../app.config';
 import { Unsubscriber } from '../shared/unsubscriber';
 import { getAccessToken } from '../auth/store/auth.selectors';
 import { ActivatedRoute } from '@angular/router';
@@ -21,14 +21,16 @@ export class HomeComponent extends Unsubscriber implements OnInit, OnDestroy {
     private location: Location,
     private store: Store<fromApp.State>,
     private route: ActivatedRoute,
-    @Inject(BASE_URL_TOKEN) private baseUrl: string,
-    @Inject(CLIENT_ID_TOKEN) private clientId: string
+    @Inject(fromAppConfig.APP_BASE_URL_TOKEN) private baseUrl: string,
+    @Inject(fromAppConfig.CLIENT_ID_TOKEN) private clientId: string,
+    @Inject(fromAppConfig.INSTAGRAM_API_BASE_URL_TOKEN) private instagramBaseUrl: string
   ) {
     super();
   }
 
   signIn(): void {
-    window.location.href = `https://api.instagram.com/oauth/authorize/?client_id=${this.clientId}&redirect_uri=${this.baseUrl}${this.location.path()}&response_type=token`;
+    window.location.href = `${this.instagramBaseUrl}oauth/authorize/?client_id=${this.clientId}&redirect_uri=${this.baseUrl}`
+      + `${this.location.path()}&response_type=token`;
   }
 
   ngOnInit(): void {
