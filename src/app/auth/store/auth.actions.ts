@@ -1,32 +1,10 @@
 import * as fromAuth from './auth.reducer';
+import { createAction, props } from '@ngrx/store';
 
-export const SIGN_IN = 'AUTHORIZE_USER';
-export const NAVIGATE_AFTER_SUCCESSFUL_SIGNING_IN = 'NAVIGATE_AFTER_SUCCESSFUL_SIGNING_IN';
-export const RESET_STATE = 'UPDATE_STORE';
-export const SAVE_AUTHORIZATION_DATA = 'SAVE_AUTHORIZATION_DATA';
-
-export class SignIn {
-    readonly type = SIGN_IN;
-    constructor(public payload: string) { }
-}
-
-export class NavigateAfterSuccessfulSigningIn {
-    readonly type = NAVIGATE_AFTER_SUCCESSFUL_SIGNING_IN;
-    constructor(public payload: string) { }
-}
-
-export class ResetState {
-    readonly type = RESET_STATE;
-    constructor(public payload: fromAuth.State) { }
-}
-
-export class SaveAuthorizationData {
-    readonly type = SAVE_AUTHORIZATION_DATA;
-    constructor(public payload: string) { }
-}
-
-export type AuthActions =
-    SignIn |
-    NavigateAfterSuccessfulSigningIn |
-    ResetState |
-    SaveAuthorizationData;
+export const signIn = createAction('[Auth] Sign In', props<{ accessToken: string }>());
+export const resetState = createAction('[Auth] Reset State', props<{ newState: fromAuth.State }>());
+export const saveAuthorizationData = createAction('[Auth] Save Authorization Data', props<{ accessToken: string }>());
+export const navigateAfterSuccessfulSigningIn = createAction(
+    '[Auth] Navigate After Successful Signing In',
+    props<{ path: string }>()
+);

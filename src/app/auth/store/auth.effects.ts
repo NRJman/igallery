@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect, ofType } from '@ngrx/effects';
+import { Actions, Effect, ofType, createEffect } from '@ngrx/effects';
 import * as fromAuthActions from './auth.actions';
-import { tap, map, withLatestFrom } from 'rxjs/operators';
+import { tap, map, withLatestFrom, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
-import { Store } from '@ngrx/store';
+import { Store, Action } from '@ngrx/store';
 import * as fromApp from 'src/app/store/app.reducers';
 import { getAccessToken } from './auth.selectors';
 
@@ -17,30 +17,24 @@ export class AuthEffects {
         private store$: Store<fromApp.State>
     ) { }
 
-    @Effect()
-    authSignIn = this.actions$
-        .pipe(
-            ofType(fromAuthActions.SIGN_IN),
+    authSignIn$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(fromAuthActions.signIn),
             withLatestFrom(this.store$.select(getAccessToken)),
-            map(([, accessToken]: [fromAuthActions.SignIn, string]) => {
+            switchMap(([, accessToken]: [Action, string]) => {
                 return [
-                    {
-                        type: fromAuthActions.SAVE_AUTHORIZATION_DATA,
-                        payload: accessToken
-                    },
-                    {
-                        type: fromAuthActions.NAVIGATE_AFTER_SUCCESSFUL_SIGNING_IN,
-                        payload: '/'
-                    }
+                    fromAuthActions.saveAuthorizationData({ accessToken }),
+                    fromAuthActions.navigateAfterSuccessfulSigningIn({ path: '/' })
                 ];
             })
-        );
+        )
+    );
 
     @Effect({ dispatch: false })
-    authNavigate = this.actions$
+    authNavigate$ = this.actions$
         .pipe(
-            ofType(fromAuthActions.NAVIGATE_AFTER_SUCCESSFUL_SIGNING_IN),
-            map((action: fromAuthActions.NavigateAfterSuccessfulSigningIn): string => action.payload),
+            ofType(fromAuthActions.navigateAfterSuccessfulSigningIn),
+            map(action => action.path),
             tap((path) => {
                 this.router.navigate([path], {
                     fragment: null
@@ -48,13 +42,14 @@ export class AuthEffects {
             })
         );
 
-    @Effect({ dispatch: false })
-    saveAuthorizationData = this.actions$
-        .pipe(
-            ofType(fromAuthActions.SAVE_AUTHORIZATION_DATA),
-            map((action: fromAuthActions.SaveAuthorizationData): string => action.payload),
+    saveAuthorizationData$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(fromAuthActions.saveAuthorizationData),
+            map(action => action.accessToken),
             tap((accessToken: string) => {
                 this.cookieService.set('accessToken', accessToken);
             })
-        );
+        ),
+        { dispatch: false }
+    );
 }
