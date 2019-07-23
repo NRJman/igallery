@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import * as fromApp from './../store/app.reducers';
-import * as fromAuthActions from './../auth/store/auth.actions';
+import * as AuthActions from './../auth/store/auth.actions';
 import { Store } from '@ngrx/store';
 import { takeUntil } from 'rxjs/operators';
 import { Location } from '@angular/common';
@@ -56,7 +56,7 @@ export class HomeComponent extends Unsubscriber implements OnInit, OnDestroy {
 
         const accessToken: string = routeFragment.slice('access_token='.length);
 
-        this.store.dispatch(new fromAuthActions.SignIn(accessToken));
+        this.store.dispatch(AuthActions.signIn({ accessToken }));
       });
   }
 

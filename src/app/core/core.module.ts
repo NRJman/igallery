@@ -7,6 +7,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { AuthEffects } from '../auth/store/auth.effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { CookieService } from 'ngx-cookie-service';
+import { AuthService } from '../auth/auth.service';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { CookieService } from 'ngx-cookie-service';
     { provide: fromAppConfig.APP_BASE_URL_TOKEN, useValue: fromAppConfig.APP_BASE_URL },
     { provide: fromAppConfig.CLIENT_ID_TOKEN, useValue: fromAppConfig.CLIENT_ID },
     { provide: fromAppConfig.INSTAGRAM_API_BASE_URL_TOKEN, useValue: fromAppConfig.INSTAGRAM_API_BASE_URL },
-    CookieService
+    CookieService,
+    AuthService
   ]
 })
 export class CoreModule { }

@@ -30,9 +30,8 @@ export class AuthEffects {
         )
     );
 
-    @Effect({ dispatch: false })
-    authNavigate$ = this.actions$
-        .pipe(
+    authNavigate$ = createEffect(() =>
+        this.actions$.pipe(
             ofType(fromAuthActions.navigateAfterSuccessfulSigningIn),
             map(action => action.path),
             tap((path) => {
@@ -40,7 +39,9 @@ export class AuthEffects {
                     fragment: null
                 });
             })
-        );
+        ),
+        { dispatch: false }
+    );
 
     saveAuthorizationData$ = createEffect(() =>
         this.actions$.pipe(

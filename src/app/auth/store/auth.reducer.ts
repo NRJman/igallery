@@ -1,4 +1,5 @@
-import * as fromAuthActions from './auth.actions';
+import * as AuthActions from './auth.actions';
+import { Action, createReducer, on } from '@ngrx/store';
 
 export interface State {
     accessToken: string;
@@ -10,21 +11,18 @@ export const initialState: State = {
     isAuthenticated: false
 };
 
-export function authReducer(state: State = initialState, action: fromAuthActions.AuthActions) {
-    switch (action.type) {
-        case fromAuthActions.SIGN_IN:
-            return {
-                ...state,
-                accessToken: action.payload,
-                isAuthenticated: true
-            };
-        case fromAuthActions.RESET_STATE:
-            return {
-                ...state,
-                accessToken: action.payload.accessToken,
-                isAuthenticated: action.payload.isAuthenticated
-            };
-        default:
-            return state;
-    }
+export function authReducer(authState: State | undefined, authAction: Action) {
+    return createReducer(
+        initialState,
+        on(AuthActions.signIn, (state, action) => ({
+            ...state,
+            accessToken: action.accessToken,
+            isAuthenticated: true
+        })),
+        on(AuthActions.resetState, (state, action) => ({
+            ...state,
+            accessToken: action.newState.accessToken,
+            isAuthenticated: action.newState.isAuthenticated
+        }))
+    )(authState, authAction);
 }
