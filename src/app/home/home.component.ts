@@ -29,8 +29,9 @@ export class HomeComponent extends Unsubscriber implements OnInit, OnDestroy {
   }
 
   signIn(): void {
-    window.location.href = `${this.instagramBaseUrl}oauth/authorize/?client_id=${this.clientId}&redirect_uri=${this.baseUrl}`
-      + `${this.location.path()}&response_type=token`;
+    window.location.href = // currently looking for another method of external redirect
+    `${this.instagramBaseUrl}oauth/authorize/?client_id=${this.clientId}&redirect_uri=${this.baseUrl}` +
+    `/${this.location.path()}&response_type=token`;
   }
 
   ngOnInit(): void {
