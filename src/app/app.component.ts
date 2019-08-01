@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from './auth/auth.service';
 import * as AppState from './store/app.reducers';
 import { Store } from '@ngrx/store';
-import * as AuthActions from './auth/store/auth.actions';
+import * as fromAuthActions from './auth/store/auth.actions';
 
 @Component({
   selector: 'app-root',
@@ -12,18 +11,9 @@ import * as AuthActions from './auth/store/auth.actions';
 export class AppComponent implements OnInit {
   title = 'igallery';
 
-  constructor(private authService: AuthService, private store: Store<AppState.State>) { }
+  constructor(private store: Store<AppState.State>) { }
 
   ngOnInit(): void {
-    const accessToken = this.authService.getUserAccessToken();
-
-    if (accessToken) {
-      this.store.dispatch(AuthActions.resetState({
-        newState: {
-          accessToken,
-          isAuthenticated: true
-        }
-      }));
-    }
+    this.store.dispatch(fromAuthActions.fetchAuthorizationData());
   }
 }

@@ -7,6 +7,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { Store, Action } from '@ngrx/store';
 import * as fromApp from 'src/app/store/app.reducers';
 import { getAccessToken } from './auth.selectors';
+import { of } from 'rxjs';
 
 @Injectable()
 export class AuthEffects {
@@ -52,5 +53,23 @@ export class AuthEffects {
             })
         ),
         { dispatch: false }
+    );
+
+    fetchAuthorizationData$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(fromAuthActions.fetchAuthorizationData),
+            map(() => {
+                let isAuthenticated = false;
+                const accessToken: string = this.cookieService.get('accessToken');
+
+                if (accessToken) {
+                    isAuthenticated = true;
+
+                    return fromAuthActions.resetState({ newState: { accessToken, isAuthenticated } });
+                }
+
+                return fromAuthActions.resetState({ newState: { accessToken: null, isAuthenticated } });
+            })
+        )
     );
 }
